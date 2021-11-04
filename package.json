@@ -1,0 +1,24 @@
+{
+  "name": "desafio",
+  "version": "1.0.0",
+  "description": "Desafio API Rest",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js",
+    "start_dev": "nodemon index.js --ignore ./files/  "
+  },
+  "keywords": [
+    "NODE",
+    "API",
+    "Rest"
+  ],
+  "author": "Dario Valenzuela",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.21.4",
+    "dotenv": "^10.0.0",
+    "url": "^0.11.0",
+    "uuid": "^8.3.2"
+  }
+}

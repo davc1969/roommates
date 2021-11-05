@@ -4,6 +4,7 @@ const fs = require("fs");
 const axios = require ("axios");
 const { v4: uuidv4 } = require("uuid");
 const url = require("url");
+const mailer = require("../services/mailer")
 
 
 
@@ -46,7 +47,8 @@ const addGasto2 = (req, res) => {
         };
         jsonGastos.gastos.push(nuevoGasto);
         writeJSONFile(process.env.GASTOS_FILENAME, jsonGastos);
-        distribuirGastoEntreRoommates2(body.roommate, body.monto)
+        distribuirGastoEntreRoommates2(body.roommate, body.monto);
+        sendMailToRoommates("Nuevo gasto creado", "Se ha creado un nuevo gasto, se incluye descripción: ", nuevoGasto);
         return JSON.stringify({serverCode: 201, statusAction: "Creado"})
     })
 
@@ -118,6 +120,23 @@ const distribuirGastoEntreRoommates2 = (roommateQueHizoElGasto, montoGastado) =>
         }
     });
     writeJSONFile(process.env.ROOMMIES_FILENAME, roommiesJSON);
+}
+
+const sendMailToRoommates = async (subject, text, gasto) => {
+    let roommiesJSON = readJSONFile(process.env.ROOMMIES_FILENAME);
+    let mailList = roommiesJSON.roommates.map( r => r.email);
+    text += `\n`;
+    text += `Persona que generó el gasto: ${gasto.roommate} \n`;
+    text += `Descripción del gasto: ${gasto.descripcion} \n`;
+    text += `Monto del gasto: ${gasto.monto}\n`;
+
+    try {
+        const mailResponse = await mailer.send(mailList, subject, text);
+        console.log("all mails were succesfully sent <br>");
+    }  
+    catch (error) {
+        console.log(`Something went wrong\n${error}`);
+    }
 }
 
 
